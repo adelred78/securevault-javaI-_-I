@@ -4,9 +4,11 @@ import java.util.List;
 public class AuthService {
 
     private List<User> users;
+    private FileManager fileManager;
 
     public AuthService() {
-        users = new ArrayList<>();
+        fileManager = new FileManager();
+        users = new ArrayList<>(fileManager.loadUsers());
     }
 
     public boolean createUser(String username, String password) {
@@ -24,6 +26,7 @@ public class AuthService {
 
         User user = new User(username, password);
         users.add(user);
+        fileManager.saveUser(user);
 
         return true;
     }
