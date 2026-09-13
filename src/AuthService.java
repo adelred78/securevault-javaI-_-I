@@ -41,6 +41,10 @@ public class AuthService {
         return user.getPassword().equals(password);
     }
 
+    public User getUser(String username) {
+        return findUser(username);
+    }
+
     private User findUser(String username) {
         for (User user : users) {
             if (user.getUsername().equals(username)) {

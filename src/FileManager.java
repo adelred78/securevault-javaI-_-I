@@ -14,6 +14,10 @@ public class FileManager {
         createDataDirectory();
     }
 
+    // =========================
+    // Gestion des utilisateurs
+    // =========================
+
     private void createDataDirectory() {
         try {
             Files.createDirectories(DATA_DIRECTORY);
@@ -48,6 +52,7 @@ public class FileManager {
             List<String> lines = Files.readAllLines(USERS_FILE);
 
             for (String line : lines) {
+
                 if (line.isBlank()) {
                     continue;
                 }
@@ -64,5 +69,85 @@ public class FileManager {
         }
 
         return users;
+    }
+
+    // =========================
+    // Gestion des fichiers
+    // =========================
+
+    public boolean addFile(Path sourceFile, Path vaultPath) {
+
+        try {
+
+            if (!Files.exists(sourceFile)) {
+                return false;
+            }
+
+            if (!Files.isRegularFile(sourceFile)) {
+                return false;
+            }
+
+            Path destination = vaultPath.resolve(sourceFile.getFileName());
+
+            if (Files.exists(destination)) {
+                return false;
+            }
+
+            Files.copy(sourceFile, destination);
+
+            return true;
+
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public List<String> listFiles(Path vaultPath) {
+
+        List<String> fileNames = new ArrayList<>();
+
+        try {
+
+            if (!Files.exists(vaultPath)) {
+                return fileNames;
+            }
+
+            try (var stream = Files.list(vaultPath)) {
+
+                stream
+                        .filter(Files::isRegularFile)
+                        .forEach(path ->
+                                fileNames.add(path.getFileName().toString())
+                        );
+            }
+
+        } catch (IOException e) {
+            System.out.println("Erreur lors de la lecture du coffre.");
+        }
+
+        return fileNames;
+    }
+
+    public boolean deleteFile(String fileName, Path vaultPath) {
+
+        try {
+
+            Path fileToDelete = vaultPath.resolve(fileName);
+
+            if (!Files.exists(fileToDelete)) {
+                return false;
+            }
+
+            if (!Files.isRegularFile(fileToDelete)) {
+                return false;
+            }
+
+            Files.delete(fileToDelete);
+
+            return true;
+
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
