@@ -3,15 +3,21 @@ import java.util.List;
 
 public class AuthService {
 
-    private List<User> users;
-    private FileManager fileManager;
+    private final List<User> users;
+    private final FileManager fileManager;
+    private final CryptoService cryptoService;
 
     public AuthService() {
         fileManager = new FileManager();
+        cryptoService = new CryptoService();
         users = new ArrayList<>(fileManager.loadUsers());
     }
 
-    public boolean createUser(String username, String password) {
+    public boolean createUser(
+            String username,
+            String password
+    ) {
+
         if (username == null || username.isBlank()) {
             return false;
         }
@@ -24,21 +30,37 @@ public class AuthService {
             return false;
         }
 
-        User user = new User(username, password);
+        CryptoService.PasswordData passwordData =
+                cryptoService.hashPassword(password);
+
+        User user = new User(
+                username,
+                passwordData.getHash(),
+                passwordData.getSalt()
+        );
+
         users.add(user);
         fileManager.saveUser(user);
 
         return true;
     }
 
-    public boolean login(String username, String password) {
+    public boolean login(
+            String username,
+            String password
+    ) {
+
         User user = findUser(username);
 
         if (user == null) {
             return false;
         }
 
-        return user.getPassword().equals(password);
+        return cryptoService.verifyPassword(
+                password,
+                user.getPasswordSalt(),
+                user.getPasswordHash()
+        );
     }
 
     public User getUser(String username) {
@@ -46,7 +68,9 @@ public class AuthService {
     }
 
     private User findUser(String username) {
+
         for (User user : users) {
+
             if (user.getUsername().equals(username)) {
                 return user;
             }
