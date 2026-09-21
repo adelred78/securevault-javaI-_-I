@@ -1,0 +1,7 @@
+[2026-09-21 23:06:47] APPLICATION_STARTED | user=SYSTEM | Secure Vault started
+[2026-09-21 23:07:10] ACCOUNT_CREATED | user=adam | user account created
+[2026-09-21 23:07:48] LOGIN_SUCCESS | user=adam | authentication successful
+[2026-09-21 23:08:11] LOGOUT | user=adam | user logged out
+[2026-09-21 23:08:16] LOGIN_SUCCESS | user=adel | authentication successful
+[2026-09-21 23:08:27] FILE_DELETED | user=adel | file=test.txt.enc
+[2026-09-21 23:13:16] VAULT_OPEN_FAILED | user=adel | vault initialization failed
